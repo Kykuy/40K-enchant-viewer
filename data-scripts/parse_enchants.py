@@ -21,6 +21,7 @@ class Enchant():
     self.groups = [] # [str, ...]
     self.range = None # (low, high)
     self.no_roll = False
+    self.old_seasonal = False # for cleaning s1 and s2 enchants - Kykuy
 
   @classmethod
   def copy(Cls, enchant):
@@ -87,6 +88,9 @@ machine = {
     (r'Skill=(.*)', lambda M,D: set_value('skill',str.lower(M[0]),D)),
     (r'Groups=(.*)', lambda M,D: set_value('groups',M[0].split(','),D)),
     (r'NoRoll=1', lambda M,D: set_value('no_roll',True,D)),
+    (r'Season=[1|2]', lambda M,D: set_value('old_seasonal',True,D)), # for cleaning s1 and s2 enchants. If Neocore only adds Season tag in enchantments.cfg post-season,
+                                                                     # you could just change it to check for any number for later Seasons
+                                                                     # 4 s1 enchants are not tagged in this way however, see my gen_data_js.py comments - Kykuy
     (r'Values$', lambda: _S.VALUES),
     (r'}', commit_enchant),
     (r'.*', None),

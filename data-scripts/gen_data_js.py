@@ -65,11 +65,18 @@ def main(version_file, enchant_file, lang_file, inventory_file, output_file):
         new_enchants.append(enchant)
       if enchant.name in archeo_enchant_map:
         # We create a whole separate enchant for archeotech enchants,
-        # otherwise we can't distinguish between relic and archeo enchants.
-        e = Enchant.copy(enchant)
-        e.items = archeo_enchant_map[enchant.name]
-        e.quality = 'archeo'
-        new_enchants.append(e)
+        # otherwise we can't distinguish between relic and archeo enchants. - Borogove
+        # But first check for seasonal enchant, skip creating a copy if true.
+        # Some enchantments(4 from Inferno season) are not properly tagged in enchantments.cfg and will require additional cleaning by e.g. ench name(they all have inferno in name)        
+        # The comment above was helpful in locating the solution to removing old seasonals in archeotechs, thanks - Kykuy
+        if enchant.old_seasonal==True or 'inferno' in enchant.name:
+          print('Skipping old seasonal enchant: '+str(enchant.name))
+          continue
+        else:
+          e = Enchant.copy(enchant)
+          e.items = archeo_enchant_map[enchant.name]
+          e.quality = 'archeo'
+          new_enchants.append(e)
       if enchant.name not in relic_enchant_map and enchant.name not in archeo_enchant_map:
         # Enchants that are ancient-only or simply left unused in the game
         # appear here.
@@ -109,7 +116,10 @@ def main(version_file, enchant_file, lang_file, inventory_file, output_file):
 
   # Also filter out enchants that cannot roll. No sense in listing them.
   enchants = [_ for _ in enchants if not _.no_roll]
-
+  
+  # Filter out old seasonal(s1 & s2) enchants
+  enchants = [_ for _ in enchants if not _.old_seasonal]
+  
   enchant_data = ''
   for enchant in enchants:
     enchant_data += format_enchant(enchant, ench_str_map)

@@ -41,6 +41,11 @@ var slot_items = new Map([
 
 '''
 
+# for cleaning untagged s1 enchants, add after enchants variable declaration
+# (not needed anymore, I moved this part to gen_data_js.py run) - Kykuy
+# // untagged s1 enchants cleanup
+# enchants = enchants.filter( (enchant) => !enchant.str.toLowerCase().includes('inferno') );
+
 ################################################################################
 
 ENCHANT_TEMPLATE='''new Enchant('{name}',
